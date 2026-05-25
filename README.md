@@ -8,21 +8,50 @@
 
 > Open-source. Drop-in. Works with any MCP client.
 
+## Why
+
+AI agents connected to MCP servers can call any tool they have access to — read your database, delete files, execute arbitrary SQL. AuthzX MCP Gateway puts a policy enforcement point between the agent and those tools, so every call is authorized before it executes.
+
 ## What it does
 
 - Sits between MCP clients (Claude Code, Cursor, VS Code, GitHub Copilot) and any MCP server
 - Intercepts every tool call and checks authorization before forwarding
 - Two modes: **cloud** (AuthzX Cloud API) and **local** (AuthzX Agent + .rego policy file)
-- Full audit trail of every tool invocation with subject, tool name, arguments, and decision
+- Full audit trail of every tool invocation — subject, tool name, arguments, and decision are logged as structured JSON:
+
+```json
+{"ts":"2026-05-25T10:03:11.482Z","level":"info","msg":"mcp_tool_call","subject":"agent:ai-assistant","tool":"database__query","allowed":true,"latency_ms":0.8}
+```
 
 ## Quick Start
 
-1. Install and start the [AuthzX Agent](https://github.com/authzx/agent) with a local policy:
+1. Install and start the [AuthzX Agent](https://github.com/authzx/agent). The agent runs locally and evaluates your authorization policy — no cloud account needed.
 
 ```bash
 go install github.com/authzx/agent/cmd/agent@latest
 authzx-agent --policy ./policy.rego
 ```
+
+Create a `policy.rego` to define what your agent can do:
+
+```rego
+package authzx.mcp
+
+default allow := false
+
+# Allow read-only tools
+allow if { input.resource.name == "database__query" }
+allow if { input.resource.name == "database__list_tables" }
+
+# Allow writes, but block destructive SQL
+allow if {
+    input.resource.name == "database__execute"
+    not contains(lower(input.resource.attributes.sql), "drop")
+    not contains(lower(input.resource.attributes.sql), "delete from")
+}
+```
+
+See [`demo/policies/`](demo/policies/) for more examples including Kubernetes namespace protection.
 
 2. Create a `gateway.config.json`:
 
@@ -56,7 +85,7 @@ claude mcp add --transport stdio authzx-gateway -- \
 | ------------------ | ------ | -------- | -------------------------------------------------------------- |
 | `authzx.agentUrl`  | string | \*       | URL of local AuthzX Agent (local mode)                         |
 | `authzx.cloudUrl`  | string | \*       | URL of AuthzX Cloud API (cloud mode)                           |
-| `authzx.apiKey`    | string |          | API key for cloud mode (or set `AUTHZX_API_KEY` env var)       |
+| `authzx.apiKey`    | string |          | API key from [AuthzX Cloud](https://app.authzx.com) (or set `AUTHZX_API_KEY` env var) |
 | `authzx.timeoutMs` | number |          | Authorization request timeout (default: 5000)                  |
 | `subject`          | string | yes      | Identity of the agent making tool calls                        |
 | `subjectType`      | string |          | Subject type (default: `"agent"`)                              |
