@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "authzx-gateway": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "authzx-mcp-gateway",
+        "--config",
+        "/path/to/gateway.config.json"
+      ]
+    }
+  }
+}

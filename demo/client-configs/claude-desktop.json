@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "authzx-gateway": {
+      "command": "npx",
+      "args": [
+        "authzx-mcp-gateway",
+        "--config",
+        "/path/to/gateway.config.json"
+      ]
+    }
+  }
+}

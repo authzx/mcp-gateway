@@ -1,0 +1,13 @@
+{
+  "authzx": {
+    "agentUrl": "http://localhost:8181",
+    "apiKey": "azx_demo_key"
+  },
+  "subject": "agent:cursor",
+  "servers": {
+    "kubernetes": {
+      "command": "node",
+      "args": ["mock-servers/kubernetes-server.mjs"]
+    }
+  }
+}

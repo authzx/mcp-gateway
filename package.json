@@ -1,0 +1,37 @@
+{
+  "name": "@authzx/mcp-gateway",
+  "version": "0.1.0",
+  "description": "AuthzX MCP Gateway — policy-enforcing proxy between AI agents and MCP servers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "authzx-mcp-gateway": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "authzx",
+    "mcp",
+    "gateway",
+    "authorization",
+    "ai-agent"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "~5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

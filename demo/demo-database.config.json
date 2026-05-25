@@ -1,0 +1,13 @@
+{
+  "authzx": {
+    "agentUrl": "http://localhost:8181",
+    "apiKey": "azx_demo_key"
+  },
+  "subject": "agent:cursor",
+  "servers": {
+    "database": {
+      "command": "node",
+      "args": ["mock-servers/database-server.mjs"]
+    }
+  }
+}
