@@ -9,6 +9,7 @@ import {
 import type { GatewayConfig, ServerConfig } from "./types";
 import { authorize } from "./authorize";
 import { AuditForwarder, generateRequestId } from "./audit";
+import { syncAllServers } from "./sync";
 
 interface DownstreamServer {
   name: string;
@@ -25,6 +26,13 @@ export async function startGateway(config: GatewayConfig): Promise<void> {
   const downstreams = await spawnDownstreams(config.servers);
   const toolIndex = buildToolIndex(downstreams);
   const audit = new AuditForwarder(config);
+  let blockedTools = new Set<string>();
+
+  syncAllServers(config, downstreams)
+    .then((blocked) => { blockedTools = blocked; })
+    .catch((err) =>
+      console.error("[authzx-gateway] tool sync warning:", err instanceof Error ? err.message : err)
+    );
 
   const shutdown = async () => {
     for (const ds of downstreams) {
@@ -64,6 +72,23 @@ export async function startGateway(config: GatewayConfig): Promise<void> {
     if (!entry) {
       return {
         content: [{ type: "text", text: `Unknown tool: ${fullName}` }],
+        isError: true,
+      };
+    }
+
+    if (blockedTools.has(fullName)) {
+      audit.record({
+        requestId,
+        subject: config.subject,
+        tool: fullName,
+        args,
+        allowed: false,
+        reason: "schema drift detected — tool blocked until admin re-approves",
+        latencyMs: 0,
+        timestamp: new Date().toISOString(),
+      });
+      return {
+        content: [{ type: "text", text: `[AuthzX] Tool "${fullName}" is blocked — schema drift detected. An admin must re-approve this tool in the AuthzX console.` }],
         isError: true,
       };
     }

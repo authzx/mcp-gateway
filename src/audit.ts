@@ -153,7 +153,7 @@ export class AuditForwarder {
       if (!agentUrl) return undefined;
       const base = agentUrl.replace(/\/$/, "");
       const origin = new URL(base).origin;
-      return `${origin}/audit-srv/v1/agent-logs/ingest`;
+      return `${origin}/v1/agent-logs/ingest`;
     }
     return audit.forwardUrl;
   }

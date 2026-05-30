@@ -1,6 +1,6 @@
 import type { GatewayConfig, AuthorizeResult } from "./types";
 
-const DEFAULT_CLOUD_URL = "https://api.authzx.com/v1/authorize";
+const DEFAULT_CLOUD_URL = "https://api.authzx.com/access/v1/evaluation";
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 interface AuthZENResponse {
@@ -64,7 +64,7 @@ function resolveEndpoints(config: GatewayConfig): string[] {
   const a = config.authzx;
   if (a.agentUrl) {
     const base = a.agentUrl.replace(/\/$/, "");
-    urls.push(base.endsWith("/v1/authorize") ? base : `${base}/v1/authorize`);
+    urls.push(base.endsWith("/access/v1/evaluation") ? base : `${base}/access/v1/evaluation`);
   }
   if (a.cloudUrl) urls.push(a.cloudUrl);
   if (urls.length === 0) urls.push(DEFAULT_CLOUD_URL);

@@ -40,7 +40,6 @@ function loadConfig(): GatewayConfig {
     if (process.env.AUTHZX_API_KEY) config.authzx.apiKey = process.env.AUTHZX_API_KEY;
     if (process.env.AUTHZX_AGENT_URL) config.authzx.agentUrl = process.env.AUTHZX_AGENT_URL;
     if (process.env.AUTHZX_SUBJECT) config.subject = process.env.AUTHZX_SUBJECT;
-
     if (config.authzx.agentUrl) {
       try { new URL(config.authzx.agentUrl); } catch {
         throw new Error(`'authzx.agentUrl' is not a valid URL: ${config.authzx.agentUrl}`);

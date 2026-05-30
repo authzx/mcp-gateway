@@ -16,6 +16,6 @@
   },
   "audit": {
     "tenantId": "your-tenant-uuid",
-    "forwardUrl": "https://api.authzx.com/audit-srv/v1/agent-logs/ingest"
+    "forwardUrl": "https://api.authzx.com/v1/agent-logs/ingest"
   }
 }
