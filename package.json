@@ -1,6 +1,7 @@
 {
   "name": "@authzx/mcp-gateway",
   "version": "1.0.0",
+  "mcpName": "io.github.authzx/mcp-gateway",
   "description": "AuthzX MCP Gateway — policy-enforcing proxy between AI agents and MCP servers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
