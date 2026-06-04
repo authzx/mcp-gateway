@@ -1,8 +1,8 @@
-# AuthzX MCP Gateway
+# Vengtoo MCP Gateway
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/Node-≥18-339933.svg)](https://nodejs.org)
-[![npm](https://img.shields.io/npm/v/@authzx/mcp-gateway)](https://www.npmjs.com/package/@authzx/mcp-gateway)
+[![npm](https://img.shields.io/npm/v/@vengtoo/mcp-gateway)](https://www.npmjs.com/package/@vengtoo/mcp-gateway)
 
 **Authorization gateway for AI agents and MCP tool calls.**
 
@@ -10,13 +10,13 @@
 
 ## Why
 
-AI agents connected to MCP servers can call any tool they have access to — read your database, delete files, execute arbitrary SQL. AuthzX MCP Gateway puts a policy enforcement point between the agent and those tools, so every call is authorized before it executes.
+AI agents connected to MCP servers can call any tool they have access to — read your database, delete files, execute arbitrary SQL. Vengtoo MCP Gateway puts a policy enforcement point between the agent and those tools, so every call is authorized before it executes.
 
 ## What it does
 
 - Sits between MCP clients (Claude Code, Cursor, VS Code, GitHub Copilot) and any MCP server
 - Intercepts every tool call and checks authorization before forwarding
-- Two modes: **cloud** (AuthzX Cloud API) and **local** (AuthzX Agent + .rego policy file)
+- Two modes: **cloud** (Vengtoo Cloud API) and **local** (Vengtoo Agent + .rego policy file)
 - Full audit trail of every tool invocation — subject, tool name, arguments, and decision are logged as structured JSON:
 
 ```json
@@ -25,17 +25,17 @@ AI agents connected to MCP servers can call any tool they have access to — rea
 
 ## Quick Start
 
-1. Install and start the [AuthzX Agent](https://github.com/authzx/agent). The agent runs locally and evaluates your authorization policy — no cloud account needed.
+1. Install and start the [Vengtoo Agent](https://github.com/vengtoo/agent). The agent runs locally and evaluates your authorization policy — no cloud account needed.
 
 ```bash
-go install github.com/authzx/agent/cmd/agent@latest
-authzx-agent --policy ./policy.rego
+go install github.com/vengtoo/agent/cmd/agent@latest
+vengtoo-agent --policy ./policy.rego
 ```
 
 Create a `policy.rego` to define what your agent can do:
 
 ```rego
-package authzx.mcp
+package vengtoo.mcp
 
 default allow := false
 
@@ -57,7 +57,7 @@ See [`demo/policies/`](demo/policies/) for more examples including Kubernetes na
 
 ```json
 {
-  "authzx": {
+  "vengtoo": {
     "agentUrl": "http://localhost:8181"
   },
   "subject": "agent:ai-assistant",
@@ -73,8 +73,8 @@ See [`demo/policies/`](demo/policies/) for more examples including Kubernetes na
 3. Add to your MCP client (e.g. Claude Code):
 
 ```bash
-claude mcp add --transport stdio authzx-gateway -- \
-  npx authzx-mcp-gateway --config /path/to/gateway.config.json
+claude mcp add --transport stdio vengtoo-gateway -- \
+  npx vengtoo-mcp-gateway --config /path/to/gateway.config.json
 ```
 
 ## Configuration
@@ -83,10 +83,10 @@ claude mcp add --transport stdio authzx-gateway -- \
 
 | Field              | Type   | Required | Description                                                    |
 | ------------------ | ------ | -------- | -------------------------------------------------------------- |
-| `authzx.agentUrl`  | string | \*       | URL of local AuthzX Agent (local mode)                         |
-| `authzx.cloudUrl`  | string | \*       | URL of AuthzX Cloud API (cloud mode)                           |
-| `authzx.apiKey`    | string |          | API key from [AuthzX Cloud](https://app.authzx.com) (or set `AUTHZX_API_KEY` env var) |
-| `authzx.timeoutMs` | number |          | Authorization request timeout (default: 5000)                  |
+| `vengtoo.agentUrl`  | string | \*       | URL of local Vengtoo Agent (local mode)                         |
+| `vengtoo.cloudUrl`  | string | \*       | URL of Vengtoo Cloud API (cloud mode)                           |
+| `vengtoo.apiKey`    | string |          | API key from [Vengtoo Cloud](https://console.vengtoo.com) (or set `VENGTOO_API_KEY` env var) |
+| `vengtoo.timeoutMs` | number |          | Authorization request timeout (default: 5000)                  |
 | `subject`          | string | yes      | Identity of the agent making tool calls                        |
 | `subjectType`      | string |          | Subject type (default: `"agent"`)                              |
 | `resourceType`     | string |          | Resource type for authorization checks (default: `"mcp_tool"`) |
@@ -106,12 +106,12 @@ Each entry in `servers` has:
 
 ### Cloud mode
 
-Connect to AuthzX Cloud for managed policies:
+Connect to Vengtoo Cloud for managed policies:
 
 ```json
 {
-  "authzx": {
-    "cloudUrl": "https://api.authzx.com/v1/authorize",
+  "vengtoo": {
+    "cloudUrl": "https://api.vengtoo.com/access/v1/evaluation",
     "apiKey": "azx_..."
   },
   "subject": "agent:prod-assistant",
@@ -126,16 +126,16 @@ Connect to AuthzX Cloud for managed policies:
 
 ### Local mode
 
-Run the AuthzX Agent locally with a .rego policy file for offline, self-contained authorization:
+Run the Vengtoo Agent locally with a .rego policy file for offline, self-contained authorization:
 
 ```bash
 # Start the agent with your policy
-authzx-agent --policy ./policy.rego
+vengtoo-agent --policy ./policy.rego
 ```
 
 ```json
 {
-  "authzx": {
+  "vengtoo": {
     "agentUrl": "http://localhost:8181"
   },
   "subject": "agent:dev-assistant",
@@ -156,7 +156,7 @@ authzx-agent --policy ./policy.rego
 | `--list-tools`             | List all tools from configured downstream servers and exit                             |
 | `--generate-policy [path]` | Generate a starter .rego policy file for the configured tools (default: `policy.rego`) |
 
-Environment variable overrides: `AUTHZX_API_KEY`, `AUTHZX_AGENT_URL`, `AUTHZX_SUBJECT`.
+Environment variable overrides: `VENGTOO_API_KEY`, `VENGTOO_AGENT_URL`, `AUTHZX_SUBJECT`.
 
 ## MCP Client Setup
 
@@ -165,8 +165,8 @@ The gateway runs as a stdio MCP server. Point your MCP client at it instead of t
 ### Claude Code
 
 ```bash
-claude mcp add --transport stdio authzx-gateway -- \
-  npx authzx-mcp-gateway --config /path/to/gateway.config.json
+claude mcp add --transport stdio vengtoo-gateway -- \
+  npx vengtoo-mcp-gateway --config /path/to/gateway.config.json
 ```
 
 ### Cursor
@@ -176,9 +176,9 @@ Add to `.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "authzx-gateway": {
+    "vengtoo-gateway": {
       "command": "npx",
-      "args": ["authzx-mcp-gateway", "--config", "/path/to/gateway.config.json"]
+      "args": ["vengtoo-mcp-gateway", "--config", "/path/to/gateway.config.json"]
     }
   }
 }
@@ -191,9 +191,9 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "authzx-gateway": {
+    "vengtoo-gateway": {
       "command": "npx",
-      "args": ["authzx-mcp-gateway", "--config", "/path/to/gateway.config.json"]
+      "args": ["vengtoo-mcp-gateway", "--config", "/path/to/gateway.config.json"]
     }
   }
 }
@@ -206,10 +206,10 @@ Add to `.vscode/mcp.json`:
 ```json
 {
   "servers": {
-    "authzx-gateway": {
+    "vengtoo-gateway": {
       "type": "stdio",
       "command": "npx",
-      "args": ["authzx-mcp-gateway", "--config", "/path/to/gateway.config.json"]
+      "args": ["vengtoo-mcp-gateway", "--config", "/path/to/gateway.config.json"]
     }
   }
 }
@@ -219,8 +219,8 @@ See [`demo/`](demo/) for full end-to-end examples with sample policies.
 
 ## Feedback
 
-- [GitHub Issues](https://github.com/authzx/mcp-gateway/issues) — Bug reports and feature requests
-- [Documentation](https://docs.authzx.com) — Guides and API reference
+- [GitHub Issues](https://github.com/vengtoo/mcp-gateway/issues) — Bug reports and feature requests
+- [Documentation](https://docs.vengtoo.com) — Guides and API reference
 
 ## License
 

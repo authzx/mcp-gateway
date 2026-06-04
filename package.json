@@ -1,12 +1,12 @@
 {
-  "name": "@authzx/mcp-gateway",
-  "version": "1.0.1",
+  "name": "@vengtoo/mcp-gateway",
+  "version": "1.0.0",
   "mcpName": "io.github.authzx/mcp-gateway",
-  "description": "AuthzX MCP Gateway — policy-enforcing proxy between AI agents and MCP servers",
+  "description": "Vengtoo MCP Gateway — policy-enforcing proxy between AI agents and MCP servers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "authzx-mcp-gateway": "dist/cli.js"
+    "vengtoo-mcp-gateway": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -17,7 +17,7 @@
     "dist"
   ],
   "keywords": [
-    "authzx",
+    "vengtoo",
     "mcp",
     "gateway",
     "authorization",

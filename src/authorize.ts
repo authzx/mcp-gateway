@@ -1,6 +1,6 @@
 import type { GatewayConfig, AuthorizeResult } from "./types";
 
-const DEFAULT_CLOUD_URL = "https://api.authzx.com/access/v1/evaluation";
+const DEFAULT_CLOUD_URL = "https://api.vengtoo.com/access/v1/evaluation";
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 interface AuthZENResponse {

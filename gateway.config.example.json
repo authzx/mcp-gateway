@@ -1,5 +1,5 @@
 {
-  "authzx": {
+  "vengtoo": {
     "agentUrl": "http://localhost:8181",
     "apiKey": "azx_your_api_key_here"
   },
@@ -16,6 +16,6 @@
   },
   "audit": {
     "tenantId": "your-tenant-uuid",
-    "forwardUrl": "https://api.authzx.com/v1/agent-logs/ingest"
+    "forwardUrl": "https://api.vengtoo.com/v1/agent-logs/ingest"
   }
 }

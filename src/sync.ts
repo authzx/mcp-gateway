@@ -8,7 +8,7 @@ import { getOrCreateGatewayId } from "./gateway-id";
 import type { DiscoveredTool } from "./utils";
 
 const SYNC_TIMEOUT_MS = 10_000;
-const DEFAULT_CLOUD_BASE = "https://api.authzx.com";
+const DEFAULT_CLOUD_BASE = "https://api.vengtoo.com";
 
 interface SyncResponse {
   synced: number;
